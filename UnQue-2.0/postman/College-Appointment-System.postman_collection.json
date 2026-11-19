@@ -1,0 +1,511 @@
+{
+  "info": {
+    "name": "College Appointment System",
+    "description": "Complete test collection for the College Appointment System API deployed on AWS EC2 with DocumentDB.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "localhost:5001", "type": "string" },
+    { "key": "professorToken", "value": "", "type": "string" },
+    { "key": "student1Token", "value": "", "type": "string" },
+    { "key": "student2Token", "value": "", "type": "string" },
+    { "key": "professorId", "value": "", "type": "string" },
+    { "key": "student1Id", "value": "", "type": "string" },
+    { "key": "student2Id", "value": "", "type": "string" },
+    { "key": "slotId1", "value": "", "type": "string" },
+    { "key": "slotId2", "value": "", "type": "string" },
+    { "key": "slotId3", "value": "", "type": "string" },
+    { "key": "appointmentId1", "value": "", "type": "string" },
+    { "key": "appointmentId2", "value": "", "type": "string" }
+  ],
+  "item": [
+    {
+      "name": "01. Register Student A1",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Student A1\",\n  \"email\": \"student1@example.com\",\n  \"password\": \"Test@123\",\n  \"confirmPassword\": \"Test@123\",\n  \"role\": \"student\"\n}"
+        },
+        "url": { "raw": "http://{{baseUrl}}/users/register", "protocol": "http", "host": ["{{baseUrl}}"], "path": ["users", "register"] }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code is 201', function() { pm.response.to.have.status(201); });",
+              "var jsonData = pm.response.json();",
+              "pm.test('User created', function() { pm.expect(jsonData.newUser).to.exist; });",
+              "pm.collectionVariables.set('student1Id', jsonData.newUser._id);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "02. Login Student A1",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"student1@example.com\",\n  \"password\": \"Test@123\"\n}"
+        },
+        "url": { "raw": "http://{{baseUrl}}/users/login", "protocol": "http", "host": ["{{baseUrl}}"], "path": ["users", "login"] }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code is 200', function() { pm.response.to.have.status(200); });",
+              "var jsonData = pm.response.json();",
+              "pm.test('Token received', function() { pm.expect(jsonData.token).to.exist; });",
+              "pm.test('Role is student', function() { pm.expect(jsonData.role).to.eql('student'); });",
+              "pm.collectionVariables.set('student1Token', jsonData.token);",
+              "pm.collectionVariables.set('student1Id', jsonData.id);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "03. Register Professor P1",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Professor P1\",\n  \"email\": \"professor1@example.com\",\n  \"password\": \"Test@123\",\n  \"confirmPassword\": \"Test@123\",\n  \"role\": \"professor\"\n}"
+        },
+        "url": { "raw": "http://{{baseUrl}}/users/register", "protocol": "http", "host": ["{{baseUrl}}"], "path": ["users", "register"] }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code is 201', function() { pm.response.to.have.status(201); });",
+              "var jsonData = pm.response.json();",
+              "pm.test('Professor created', function() { pm.expect(jsonData.newUser).to.exist; });",
+              "pm.test('Role is professor', function() { pm.expect(jsonData.newUser.role).to.eql('professor'); });",
+              "pm.collectionVariables.set('professorId', jsonData.newUser._id);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "04. Login Professor P1",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"professor1@example.com\",\n  \"password\": \"Test@123\"\n}"
+        },
+        "url": { "raw": "http://{{baseUrl}}/users/login", "protocol": "http", "host": ["{{baseUrl}}"], "path": ["users", "login"] }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code is 200', function() { pm.response.to.have.status(200); });",
+              "var jsonData = pm.response.json();",
+              "pm.test('Token received', function() { pm.expect(jsonData.token).to.exist; });",
+              "pm.test('Role is professor', function() { pm.expect(jsonData.role).to.eql('professor'); });",
+              "pm.collectionVariables.set('professorToken', jsonData.token);",
+              "pm.collectionVariables.set('professorId', jsonData.id);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "05. Register Student A2",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Student A2\",\n  \"email\": \"student2@example.com\",\n  \"password\": \"Test@123\",\n  \"confirmPassword\": \"Test@123\",\n  \"role\": \"student\"\n}"
+        },
+        "url": { "raw": "http://{{baseUrl}}/users/register", "protocol": "http", "host": ["{{baseUrl}}"], "path": ["users", "register"] }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code is 201', function() { pm.response.to.have.status(201); });",
+              "var jsonData = pm.response.json();",
+              "pm.collectionVariables.set('student2Id', jsonData.newUser._id);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "06. Login Student A2",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"student2@example.com\",\n  \"password\": \"Test@123\"\n}"
+        },
+        "url": { "raw": "http://{{baseUrl}}/users/login", "protocol": "http", "host": ["{{baseUrl}}"], "path": ["users", "login"] }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code is 200', function() { pm.response.to.have.status(200); });",
+              "var jsonData = pm.response.json();",
+              "pm.collectionVariables.set('student2Token', jsonData.token);",
+              "pm.collectionVariables.set('student2Id', jsonData.id);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "07. Professor P1 Creates Slot 1 (T1)",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Authorization", "value": "Bearer {{professorToken}}" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"startTime\": \"2026-11-20T10:00:00Z\",\n  \"endTime\": \"2026-11-20T10:30:00Z\"\n}"
+        },
+        "url": { "raw": "http://{{baseUrl}}/professor/availability", "protocol": "http", "host": ["{{baseUrl}}"], "path": ["professor", "availability"] }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code is 201', function() { pm.response.to.have.status(201); });",
+              "var jsonData = pm.response.json();",
+              "pm.test('Slot created', function() { pm.expect(jsonData.availability).to.exist; });",
+              "pm.collectionVariables.set('slotId1', jsonData.availability._id);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "08. Professor P1 Creates Slot 2 (T2)",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Authorization", "value": "Bearer {{professorToken}}" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"startTime\": \"2026-11-20T11:00:00Z\",\n  \"endTime\": \"2026-11-20T11:30:00Z\"\n}"
+        },
+        "url": { "raw": "http://{{baseUrl}}/professor/availability", "protocol": "http", "host": ["{{baseUrl}}"], "path": ["professor", "availability"] }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code is 201', function() { pm.response.to.have.status(201); });",
+              "var jsonData = pm.response.json();",
+              "pm.collectionVariables.set('slotId2', jsonData.availability._id);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "09. Professor P1 Creates Slot 3 (Free - for update test)",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Authorization", "value": "Bearer {{professorToken}}" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"startTime\": \"2026-11-20T14:00:00Z\",\n  \"endTime\": \"2026-11-20T14:30:00Z\"\n}"
+        },
+        "url": { "raw": "http://{{baseUrl}}/professor/availability", "protocol": "http", "host": ["{{baseUrl}}"], "path": ["professor", "availability"] }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code is 201', function() { pm.response.to.have.status(201); });",
+              "var jsonData = pm.response.json();",
+              "pm.collectionVariables.set('slotId3', jsonData.availability._id);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "10. Student A1 Views Available Slots",
+      "request": {
+        "method": "GET",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{student1Token}}" }
+        ],
+        "url": { "raw": "http://{{baseUrl}}/general/professor/{{professorId}}/availability", "protocol": "http", "host": ["{{baseUrl}}"], "path": ["general", "professor", "{{professorId}}", "availability"] }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code is 200', function() { pm.response.to.have.status(200); });",
+              "var jsonData = pm.response.json();",
+              "pm.test('Has available slots', function() { pm.expect(jsonData.availableSlots).to.be.an('array'); });",
+              "pm.test('At least 3 slots available', function() { pm.expect(jsonData.availableSlots.length).to.be.at.least(3); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "11. Student A1 Books Appointment at T1",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Authorization", "value": "Bearer {{student1Token}}" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"professorId\": \"{{professorId}}\",\n  \"time\": \"2026-11-20T10:00:00Z\"\n}"
+        },
+        "url": { "raw": "http://{{baseUrl}}/general/book", "protocol": "http", "host": ["{{baseUrl}}"], "path": ["general", "book"] }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code is 201', function() { pm.response.to.have.status(201); });",
+              "var jsonData = pm.response.json();",
+              "pm.test('Appointment booked', function() { pm.expect(jsonData.message).to.include('booked'); });",
+              "pm.test('Status is booked', function() { pm.expect(jsonData.appointment.status).to.eql('booked'); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "12. Student A2 Books Appointment at T2",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Authorization", "value": "Bearer {{student2Token}}" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"professorId\": \"{{professorId}}\",\n  \"time\": \"2026-11-20T11:00:00Z\"\n}"
+        },
+        "url": { "raw": "http://{{baseUrl}}/general/book", "protocol": "http", "host": ["{{baseUrl}}"], "path": ["general", "book"] }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code is 201', function() { pm.response.to.have.status(201); });",
+              "var jsonData = pm.response.json();",
+              "pm.test('Appointment booked', function() { pm.expect(jsonData.message).to.include('booked'); });",
+              "pm.test('Status is booked', function() { pm.expect(jsonData.appointment.status).to.eql('booked'); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "13. Professor P1 Updates FREE Slot 3 (New API)",
+      "request": {
+        "method": "PUT",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Authorization", "value": "Bearer {{professorToken}}" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"date\": \"2026-11-20\",\n  \"startTime\": \"15:00\",\n  \"endTime\": \"15:30\"\n}"
+        },
+        "url": { "raw": "http://{{baseUrl}}/professor/update-slot/{{slotId3}}", "protocol": "http", "host": ["{{baseUrl}}"], "path": ["professor", "update-slot", "{{slotId3}}"] }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code is 200', function() { pm.response.to.have.status(200); });",
+              "var jsonData = pm.response.json();",
+              "pm.test('Slot updated', function() { pm.expect(jsonData.message).to.include('updated'); });",
+              "pm.test('Document ID preserved', function() { pm.expect(jsonData.availability._id).to.eql(pm.collectionVariables.get('slotId3')); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "14. Professor P1 Cancels Student A1 Appointments",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Authorization", "value": "Bearer {{professorToken}}" }
+        ],
+        "url": { "raw": "http://{{baseUrl}}/professor/cancel-appointments/{{student1Id}}", "protocol": "http", "host": ["{{baseUrl}}"], "path": ["professor", "cancel-appointments", "{{student1Id}}"] }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code is 200', function() { pm.response.to.have.status(200); });",
+              "var jsonData = pm.response.json();",
+              "pm.test('Appointments cancelled', function() { pm.expect(jsonData.message).to.include('cancelled'); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "15. Student A1 Checks Appointments (No Pending)",
+      "request": {
+        "method": "GET",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{student1Token}}" }
+        ],
+        "url": { "raw": "http://{{baseUrl}}/general/appointments", "protocol": "http", "host": ["{{baseUrl}}"], "path": ["general", "appointments"] }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code is 404', function() { pm.response.to.have.status(404); });",
+              "var jsonData = pm.response.json();",
+              "pm.test('No pending appointments', function() { pm.expect(jsonData.message).to.include('no pending'); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "16. Health Check",
+      "request": {
+        "method": "GET",
+        "url": { "raw": "http://{{baseUrl}}/health", "protocol": "http", "host": ["{{baseUrl}}"], "path": ["health"] }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code is 200', function() { pm.response.to.have.status(200); });",
+              "var jsonData = pm.response.json();",
+              "pm.test('Status is ok', function() { pm.expect(jsonData.status).to.eql('ok'); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "EDGE: Update Booked Slot (Should Fail)",
+      "request": {
+        "method": "PUT",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Authorization", "value": "Bearer {{professorToken}}" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"date\": \"2026-11-20\",\n  \"startTime\": \"16:00\",\n  \"endTime\": \"16:30\"\n}"
+        },
+        "url": { "raw": "http://{{baseUrl}}/professor/update-slot/{{slotId1}}", "protocol": "http", "host": ["{{baseUrl}}"], "path": ["professor", "update-slot", "{{slotId1}}"] }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code is 400', function() { pm.response.to.have.status(400); });",
+              "var jsonData = pm.response.json();",
+              "pm.test('Cannot update booked slot', function() { pm.expect(jsonData.message).to.include('booked'); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "EDGE: Update Slot with Invalid ID",
+      "request": {
+        "method": "PUT",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Authorization", "value": "Bearer {{professorToken}}" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"date\": \"2026-11-20\",\n  \"startTime\": \"16:00\",\n  \"endTime\": \"16:30\"\n}"
+        },
+        "url": { "raw": "http://{{baseUrl}}/professor/update-slot/invalidid123", "protocol": "http", "host": ["{{baseUrl}}"], "path": ["professor", "update-slot", "invalidid123"] }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code is 400', function() { pm.response.to.have.status(400); });",
+              "var jsonData = pm.response.json();",
+              "pm.test('Invalid slot ID error', function() { pm.expect(jsonData.message).to.include('Invalid'); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "EDGE: Student Tries to Update Slot (Should Fail)",
+      "request": {
+        "method": "PUT",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Authorization", "value": "Bearer {{student1Token}}" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"date\": \"2026-11-20\",\n  \"startTime\": \"16:00\",\n  \"endTime\": \"16:30\"\n}"
+        },
+        "url": { "raw": "http://{{baseUrl}}/professor/update-slot/{{slotId3}}", "protocol": "http", "host": ["{{baseUrl}}"], "path": ["professor", "update-slot", "{{slotId3}}"] }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code is 403', function() { pm.response.to.have.status(403); });",
+              "var jsonData = pm.response.json();",
+              "pm.test('Access denied for student', function() { pm.expect(jsonData.message).to.include('denied'); });"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
